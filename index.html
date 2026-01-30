@@ -67,10 +67,10 @@
                 
                 <div class="mt-4 p-4 bg-slate-900 rounded-lg border border-slate-700">
                     <p class="text-[10px] text-slate-500 leading-relaxed italic uppercase font-bold tracking-wider">
-                        Instruction:
+                        Update:
                     </p>
                     <p class="text-[10px] text-slate-400 mt-1">
-                        Sistem otomatis memperbaiki kapitalisasi awal kalimat. Nama file: [random_number].html.
+                        Meta Tags Facebook (Open Graph) otomatis ditambahkan untuk optimasi share.
                     </p>
                 </div>
             </div>
@@ -89,14 +89,12 @@
             logArea.scrollTop = logArea.scrollHeight;
         }
 
-        // Fungsi untuk mengubah huruf pertama setiap kata menjadi besar (untuk Judul/Kategori)
         function toTitleCase(str) {
             return str.toLowerCase().split(' ').map(word => {
                 return word.charAt(0).toUpperCase() + word.slice(1);
             }).join(' ');
         }
 
-        // Fungsi untuk mengubah huruf pertama setiap kalimat menjadi besar (untuk Isi Artikel)
         function toSentenceCase(str) {
             if (!str) return "";
             return str.toLowerCase().replace(/(^\s*\w|[\.\!\?]\s*\w)/g, function(c) {
@@ -107,13 +105,14 @@
         function generateAndDownload() {
             let rawTitle = document.getElementById('title').value || 'Headline News Title';
             let rawCategory = document.getElementById('category').value || 'General';
-            let imageUrl = document.getElementById('imageUrl').value || 'https://via.placeholder.com/800x450';
+            let imageUrl = document.getElementById('imageUrl').value || 'https://via.placeholder.com/1200x630';
             let rawContent = document.getElementById('content').value || 'Your content goes here...';
             
             // Auto Capitalization
             const title = toTitleCase(rawTitle);
             const category = toTitleCase(rawCategory);
             const contentFormatted = toSentenceCase(rawContent);
+            const description = contentFormatted.substring(0, 160) + "...";
 
             const date = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
 
@@ -121,7 +120,7 @@
             const randomId = Math.floor(Math.random() * 9000000) + 1000000;
             const fileName = randomId + ".html";
 
-            addLog("Processing text and generating: " + title.substring(0, 20) + "...");
+            addLog("Adding FB Meta Tags and generating: " + title.substring(0, 20) + "...");
 
             // Process content into paragraphs
             const contentHtml = contentFormatted.split('\n').map(p => {
@@ -129,13 +128,22 @@
                 return trimmed ? "<p>" + trimmed + "</p>" : "";
             }).join('');
 
-            // HTML Template
+            // HTML Template with FB Meta Tags
             const template = '<!DOCTYPE html>\n' +
 '<html lang="en">\n' +
 '<head>\n' +
 '    <meta charset="UTF-8">\n' +
 '    <meta name="viewport" content="width=device-width, initial-scale=1.0">\n' +
 '    <title>' + title + '</title>\n' +
+'\n' +
+'    <!-- Facebook Open Graph Meta Tags -->\n' +
+'    <meta property="og:type" content="article" />\n' +
+'    <meta property="og:title" content="' + title + '" />\n' +
+'    <meta property="og:description" content="' + description + '" />\n' +
+'    <meta property="og:image" content="' + imageUrl + '" />\n' +
+'    <meta property="og:image:width" content="1200" />\n' +
+'    <meta property="og:image:height" content="630" />\n' +
+'\n' +
 '    <script src="https://cdn.tailwindcss.com"><\/script>\n' +
 '    <style>\n' +
 '        @import url(\'https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap\');\n' +
@@ -219,7 +227,7 @@
                 window.URL.revokeObjectURL(url);
                 document.body.removeChild(a);
 
-                addLog("File " + fileName + " berhasil diunduh.", 'success');
+                addLog("File " + fileName + " (dengan Meta OG) berhasil diunduh.", 'success');
                 document.getElementById('statusLabel').innerText = "Tersimpan: " + fileName;
                 document.getElementById('statusLabel').className = "text-[10px] bg-green-900 px-2 py-1 rounded text-green-400 font-bold uppercase";
             } catch (err) {
